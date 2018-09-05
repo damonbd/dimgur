@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -23,9 +24,19 @@ func main() {
 func addRoutes() {
 	router = mux.NewRouter()
 	router.HandleFunc("/", Home).Methods("GET")
+	router.HandleFunc("/jsontest", jsonTest).Methods("GET", "OPTIONS")
 }
 
 //Home loads React App
 func Home(w http.ResponseWriter, r *http.Request) {
-	tpl.ExecuteTemplate(w, "home.html", nil)
+	tpl.ExecuteTemplate(w, "Home.html", nil)
+}
+
+func jsonTest(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	json.NewEncoder(w).Encode("OK")
 }
