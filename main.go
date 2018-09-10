@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -23,33 +22,26 @@ func main() {
 	addRoutes()
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"})
-	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
+	originsOk := handlers.AllowedOrigins([]string{"http://localhost:3000"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 }
 
 func addRoutes() {
 	router = mux.NewRouter()
 	router.HandleFunc("/", Home).Methods("GET")
-	router.HandleFunc("/uploadImage", uploadImage).Methods("POST", "OPTIONS")
+	router.HandleFunc("/uploadImage", uploadImage)
 }
 
 //Home loads React App
 func Home(w http.ResponseWriter, r *http.Request) {
-	tpl.ExecuteTemplate(w, "home.html", nil)
+	fmt.Println("home")
+	tpl.ExecuteTemplate(w, "Home.html", nil)
 }
 
 func uploadImage(w http.ResponseWriter, r *http.Request) {
 	//interrogate r
-	fmt.Println("cat")
+	fmt.Println("uploadImage")
 
-	setHeaders(w, r)
 	json.NewEncoder(w).Encode("OK")
-}
-
-func setHeaders(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
