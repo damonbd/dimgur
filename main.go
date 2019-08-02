@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -14,9 +15,7 @@ import (
 var tpl *template.Template
 var router *mux.Router
 
-func init() {
-	tpl = template.Must(template.ParseGlob("Views/*"))
-}
+func init() {}
 
 func main() {
 	addRoutes()
@@ -29,15 +28,26 @@ func main() {
 
 func addRoutes() {
 	router = mux.NewRouter()
-	router.HandleFunc("/", Home).Methods("GET")
 	router.HandleFunc("/uploadImage", uploadImage)
+	router.HandleFunc("/getImagesForHome", getImagesForHome).Methods("GET")
 }
 
-//Home loads React App
-func Home(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("home")
-	tpl.ExecuteTemplate(w, "Home.html", nil)
+func getImagesForHome(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("endpoint hit")
+	// fakes call
+
+	//var path = "Images/test-media"
+
+	files, err := ioutil.ReadDir("./Images/test-media")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	json.NewEncoder(w).Encode(files)
 }
+
+// initImages fakes getting the images
+func initImages() {}
 
 func uploadImage(w http.ResponseWriter, r *http.Request) {
 	//interrogate r
