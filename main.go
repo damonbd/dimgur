@@ -33,7 +33,6 @@ func main() {
 	//originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 }
 
@@ -58,16 +57,12 @@ func getImages(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(homeImages)
 }
 
+// initImages fakes getting the images
+func initImages() {}
+
 func uploadImage(w http.ResponseWriter, r *http.Request) {
 	//interrogate r
-	fmt.Println("cat")
+	fmt.Println("uploadImage")
 
-	setHeaders(w, r)
 	json.NewEncoder(w).Encode("OK")
-}
-
-func setHeaders(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
